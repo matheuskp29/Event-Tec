@@ -27,5 +27,5 @@ public class Event {
     private String imgUrl;
     private String eventUrl;
     private Boolean remote;
-    private LocalDate date;
+    private LocalDate eventDate;
 }
