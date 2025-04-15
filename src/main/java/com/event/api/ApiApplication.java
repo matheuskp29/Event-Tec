@@ -1,4 +1,4 @@
-package com.eventtec.api;
+package com.event.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
