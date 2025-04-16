@@ -3,7 +3,7 @@ package com.event.api.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.event.api.domain.entities.Event;
 import com.event.api.domain.exceptions.GenericException;
-import com.event.api.domain.records.EventRequestDTO;
+import com.event.api.domain.records.request.EventRequestDTO;
 import com.event.api.repositories.EventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,11 @@ public class EventService {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
-    public Event createEvent(EventRequestDTO data) {
+    /**
+     * Create an Event
+     * @param data request data
+     */
+    public void createEvent(EventRequestDTO data) {
         try {
             String imgUrl = null;
 
@@ -37,7 +41,7 @@ public class EventService {
                 imgUrl = this.uploadImg(data.image());
             }
 
-            return eventRepository.save(Event.builder()
+            eventRepository.save(Event.builder()
                     .title(data.title())
                     .description(data.description())
                     .eventUrl(data.eventUrl())
@@ -52,6 +56,11 @@ public class EventService {
         }
     }
 
+    /**
+     * uploadImg in AWS
+     * @param multipartFile multipartfile
+     * @return URL img uploaded
+     */
     private String uploadImg(MultipartFile multipartFile) {
         String filename = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
         
@@ -61,11 +70,10 @@ public class EventService {
             file.delete();
             return s3Client.getUrl(bucketName, filename).toString();
         } catch (GenericException e) {
-            log.error("Error converting multipart file to file: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.error("Error uploading image to S3 bucket: {}", e.getMessage());
+            throw new GenericException("Error uploading image to S3 bucket: " + e.getMessage(), e);
         }
-        return "";
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.event.api.domain.records;
+package com.event.api.domain.records.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
