@@ -4,10 +4,14 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.event.api.domain.entities.Event;
 import com.event.api.domain.exceptions.GenericException;
 import com.event.api.domain.records.request.EventRequestDTO;
+import com.event.api.domain.records.response.EventResponseDTO;
 import com.event.api.repositories.EventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -89,6 +94,25 @@ public class EventService {
             return file;
         } catch (IOException e) {
             throw new GenericException("Error converting multipart file to file: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * get all events
+     * @param page page
+     * @param size page size
+     * @return List of events
+     */
+    public List<EventResponseDTO> getEvents(int page, int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Event> eventsPage = eventRepository.findAll(pageable);
+
+            return eventsPage
+                    .map(event -> new EventResponseDTO(event.getId(), event.getTitle(), event.getDescription(), event.getEventDate(), "", "", event.getRemote(), event.getEventUrl(), event.getImgUrl()))
+                    .toList();
+        } catch (Exception e) {
+            throw new GenericException("Error to get events: " + e.getMessage(), e);
         }
     }
 }
