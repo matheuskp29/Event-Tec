@@ -12,10 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -60,7 +57,7 @@ public class EventController extends BaseController {
     }
 
     @Operation(
-            summary = "Get events", description = "Get all events", parameters = {
+            summary = "Get events", description = "Get upcoming events", parameters = {
             @Parameter(name = "page", description = "page", in = ParameterIn.PATH, schema = @Schema(type = "integer", defaultValue = "0")),
             @Parameter(name = "size", description = "page size", in = ParameterIn.PATH, schema = @Schema(type = "integer", defaultValue = "10")),
     },
@@ -70,7 +67,8 @@ public class EventController extends BaseController {
                     @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(hidden = true)))
             }
     )
+    @GetMapping
     public ResponseEntity<List<EventResponseDTO>> getEvents(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(eventService.getEvents(page, size));
+        return ResponseEntity.ok(eventService.getUpComingEvents(page, size));
     }
 }
