@@ -1,6 +1,6 @@
 package com.event.api.domain.records.response;
 
-import java.time.LocalDate;
+import java.util.Date;
 
-public record CouponResponseDTO(String code, Integer discount, LocalDate valid, String eventTitle, String eventDescription) {
+public record CouponResponseDTO(String code, Integer discount, Date valid, String eventTitle, String eventDescription) {
 }

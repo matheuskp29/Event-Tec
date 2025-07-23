@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,7 +36,7 @@ public class CouponService {
             Coupon coupon = Coupon.builder()
                     .code(data.code())
                     .discount(data.discount())
-                    .valid(LocalDate.ofEpochDay(data.valid()))
+                    .valid(new Date(data.valid()))
                     .event(event)
                     .build();
 
@@ -47,4 +48,17 @@ public class CouponService {
         }
     }
 
+    /**
+     * Coupons by event id
+     * @param event event
+     * @param currentDate Current date for valid validation
+     * @return List of coupons by event
+     */
+    public List<Coupon> consultCoupons(Event event, Date currentDate) {
+        try {
+            return couponRepository.findByEventAndValidAfter(event, currentDate);
+        } catch (Exception e) {
+            throw new GenericException("Unexpected error in found coupons: " + e.getMessage(), e);
+        }
+    }
 }

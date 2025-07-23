@@ -1,12 +1,10 @@
 package com.event.api.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -23,7 +21,7 @@ public class Coupon {
 
     private String code;
     private Integer discount;
-    private LocalDate valid;
+    private Date valid;
 
     @ManyToOne
     @JoinColumn(name = "event_id")

@@ -14,6 +14,18 @@ import java.util.UUID;
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
-    @Query(value = "SELECT e FROM Event e WHERE e.eventDate >= :currentDate")
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.address a WHERE e.eventDate >= :currentDate")
     Page<Event> findUpComingEvents(@Param("currentDate")Date currentDate, Pageable pageable);
+
+    @Query("SELECT e From Event e LEFT JOIN e.address a " +
+            "WHERE (:title IS NULL OR e.title LIKE %:title%) " +
+            "AND (:city IS NULL OR a.city LIKE %:city%) " +
+            "AND (:uf IS NULL OR a.uf LIKE %:uf%) " +
+            "AND e.eventDate BETWEEN :startDate AND :endDate")
+    Page<Event> findFilteredEvents(@Param("title") String title,
+                                   @Param("city") String city,
+                                   @Param("uf") String uf,
+                                   @Param("startDate") Date startDate,
+                                   @Param("endDate") Date endDate,
+                                   Pageable pageable);
 }
